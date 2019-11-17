@@ -25,6 +25,10 @@ dependencies:
 - directory
 - text
 - scotty
+- aeson
+- htaglib
+- http-conduit
+- http-client
 
 library:
   source-dirs: src
@@ -37,6 +41,11 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wall
+    - -Wcompat
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wredundant-constraints
     dependencies:
     - salmon-media-server
 
