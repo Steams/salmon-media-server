@@ -29,7 +29,7 @@ dependencies:
 - htaglib
 - http-conduit
 - http-client
-
+- wai-cors
 library:
   source-dirs: src
 
