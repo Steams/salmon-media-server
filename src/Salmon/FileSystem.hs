@@ -6,6 +6,9 @@ import           System.Directory
 dir_path :: [Char]
 dir_path = "/home/steams/Development/audigo/salmon-media-server/resources/"
 
+get_path :: FilePath -> FilePath
+get_path = (++) dir_path
+
 working_dir_path :: [Char]
 working_dir_path =
   "/home/steams/Development/audigo/salmon-media-server/resources/.salmon/"

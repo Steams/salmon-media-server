@@ -27,9 +27,13 @@ dependencies:
 - scotty
 - aeson
 - htaglib
-- http-conduit
 - http-client
+- http-conduit
 - wai-cors
+- pureMD5
+- bytestring
+- containers
+
 library:
   source-dirs: src
 

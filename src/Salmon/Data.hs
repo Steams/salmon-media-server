@@ -3,15 +3,16 @@
 module Salmon.Data(Media(..),track_to_media,parse_track)where
 
 import           Data.Aeson
+import           Data.Digest.Pure.MD5
 import           Salmon.FileSystem
-import           Salmon.Server     (url_path)
+import           Salmon.Server        (url_path)
 import           Sound.HTagLib
 
-data Media = Media { title :: String , duration :: Int, path :: String} deriving (Show)
+data Media = Media { title :: String , duration :: Int, path :: String, hash :: String} deriving (Show)
 
 instance ToJSON Media where
-  toJSON (Media title duration playlist) =
-    object ["title" .= title, "duration" .= duration, "playlist" .= playlist]
+  toJSON (Media title duration playlist hash) =
+    object ["title" .= title, "duration" .= duration, "playlist" .= playlist, "hash" .= hash]
 
 data AudioTrack =
   AudioTrack
@@ -23,9 +24,14 @@ data AudioTrack =
 audio_track_getter :: TagGetter AudioTrack
 audio_track_getter = AudioTrack <$> titleGetter <*> durationGetter
 
-track_to_media :: String -> AudioTrack -> Media
-track_to_media file_name (AudioTrack title duration) =
-  Media (drop 6 . show $ title) (unDuration duration) (url_path file_name) -- Drop 6 removes the "Title " label that show places at the front of the string
+                     -- TODO USE NEW TYPES TO PREVENT SENDING NAME AND HASH IN WRONG ORDER
+track_to_media :: (FilePath,MD5Digest) -> AudioTrack -> Media
+track_to_media (file_name, file_hash) (AudioTrack title duration) =
+  Media
+    (drop 6 . show $ title)
+    (unDuration duration)
+    (url_path file_name)
+    (show file_hash) -- Drop 6 removes the "Title " label that show places at the front of the string
 
 parse_track :: FilePath -> IO AudioTrack
 parse_track = (get_meta_data . get_path)
