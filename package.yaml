@@ -33,6 +33,9 @@ dependencies:
 - pureMD5
 - bytestring
 - containers
+- fsnotify
+- split
+- path
 
 library:
   source-dirs: src
