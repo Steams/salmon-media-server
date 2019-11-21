@@ -3,18 +3,19 @@
 
 module Salmon(run) where
 
-import           Control.Concurrent   (threadDelay)
-import           Control.Monad        (forever)
-import qualified Data.ByteString.Lazy as LB
+import           Control.Concurrent        (forkIO, threadDelay)
+import           Control.Concurrent.Async (mapConcurrently)
+import           Control.Monad             (forever)
+import qualified Data.ByteString.Lazy      as LB
 import           Data.Digest.Pure.MD5
 import           Data.List
-import           Data.Set             hiding (filter, isSuffixOf, map)
+import           Data.Set                  hiding (filter, isSuffixOf, map)
 import           Network.HTTP.Simple
 import           Path
 import           Salmon.Data
 import           Salmon.FileSystem
 import           Salmon.Hls
-import           Salmon.Hub           as Hub
+import           Salmon.Hub                as Hub
 import           Salmon.Server
 import           System.FSNotify
 
@@ -27,7 +28,7 @@ synch_with_hub = do
   let new_hashes         =  difference ( fromList local_hashes  ) ( fromList remote_hashes )
   let deleted_hashes     =  difference ( fromList remote_hashes ) ( fromList local_hashes  )
   let new_files          =  filter (\(file,hash) -> elem hash new_hashes) (zip local_files local_hashes)
-  new_tracks             <- mapM parse_track (map fst new_files)
+  new_tracks             <- mapConcurrently parse_track (map fst new_files)
   mapM_ print new_tracks
   mapM_ print deleted_hashes
   let new_media          =  zipWith track_to_media new_files new_tracks
@@ -41,7 +42,7 @@ initialize_playlists :: IO ()
 initialize_playlists = do
   files <- get_files
   create_working_dir
-  mapM_ generate_playlist files
+  mapM_ (forkIO . generate_playlist) files
 
 
 watch_predicate =

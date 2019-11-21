@@ -36,6 +36,7 @@ dependencies:
 - fsnotify
 - split
 - path
+- async
 
 library:
   source-dirs: src
