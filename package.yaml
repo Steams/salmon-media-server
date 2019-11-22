@@ -37,7 +37,8 @@ dependencies:
 - split
 - path
 - async
-
+- http-types
+- bytestring
 library:
   source-dirs: src
 
@@ -54,6 +55,7 @@ executables:
     - -Wincomplete-record-updates
     - -Wincomplete-uni-patterns
     - -Wredundant-constraints
+    - -fno-warn-name-shadowing
     dependencies:
     - salmon-media-server
 
