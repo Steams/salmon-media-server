@@ -93,11 +93,14 @@ watch_fs credentials =
     _ <- watchDir mgr library_path watch_predicate (process_update credentials)
     forever $ threadDelay 1000000
 
-run :: IO ()
-run = do
+run :: String -> String -> IO ()
+run username password = do
+  credentials <- Hub.login username password
+  putStr "CREDENTIALS :"
+  print credentials
   initialize_playlists
-  synch_with_hub (Credentials "1")
+  synch_with_hub credentials
   putStrLn "settup complete"
-  _ <- forkIO $ watch_fs (Credentials "1")
+  _ <- forkIO $ watch_fs credentials
   _ <- forkIO run_server
   forever $ threadDelay 1000000

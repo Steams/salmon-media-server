@@ -39,6 +39,8 @@ dependencies:
 - async
 - http-types
 - bytestring
+- optparse-applicative
+
 library:
   source-dirs: src
 
