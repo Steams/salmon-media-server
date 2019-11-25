@@ -44,4 +44,4 @@ login :: String -> String -> IO Credentials
 login username password = do
   res :: Response ByteString <- httpBS $ setRequestBodyJSON (LoginRequest username password) "POST http://127.0.0.1:8080/api/login"
   let id = getResponseBody res
-  return $ Credentials (unpack id)
+  return $ Credentials (read . unpack $ id)

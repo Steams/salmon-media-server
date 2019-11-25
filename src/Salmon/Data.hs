@@ -38,9 +38,9 @@ audio_track_getter = AudioTrack <$> titleGetter <*> durationGetter <*> artistGet
 track_to_media :: (Path Abs File,String) -> AudioTrack -> Media
 track_to_media (file, file_hash) (AudioTrack title duration artist album) =
   Media
-    (drop 6 . show $ title) -- Drop 6 removes the "Title " label that show places at the front of the string
-    (drop 6 . show $ artist)
-    (drop 6 . show $ album)
+    (read . drop 6 . show $ title) -- Drop 6 removes the "Title " label that show places at the front of the string
+    (read . drop 6 . show $ artist)
+    (read . drop 6 . show $ album)
     (unDuration duration)
     (url_path $ get_file_name file)
     (file_hash)
