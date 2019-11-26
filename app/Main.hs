@@ -3,16 +3,10 @@ module Main where
 
 import           Data.Semigroup      ((<>))
 import           Options.Applicative
-import           Salmon
+import           Salmon (run,Config(..))
 
-data Args =
-  Args
-    { username :: String
-    , password :: String
-    }
-
-args :: Parser Args
-args = Args
+args :: Parser Config
+args = Config
       <$> strOption
           ( long "username"
          <> short 'u'
@@ -23,13 +17,17 @@ args = Args
          <> short 'p'
          <> metavar "PASSWORD"
          <> help "User password name for Salmon" )
+      <*> strOption
+          ( long "folder"
+         <> short 'f'
+         <> metavar "FOLDER"
+         <> help "Path to folder where media library is stored" )
 
 main :: IO ()
 main =
   let
-    opts = info (args <**> helper)
-      ( fullDesc <> progDesc "Media server" )
+    opts = info (args <**> helper) ( fullDesc <> progDesc "Salmon Media server HLS streaming process" )
   in
     do
-      options <- execParser opts
-      Salmon.run (username options) (password options)
+      config <- execParser opts
+      Salmon.run config

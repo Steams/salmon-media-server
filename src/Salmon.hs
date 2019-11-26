@@ -1,7 +1,7 @@
 {-# LANGUAGE LambdaCase          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Salmon(run) where
+module Salmon(run,Config(..)) where
 
 import           Control.Concurrent       (forkIO, threadDelay)
 import           Control.Concurrent.Async (mapConcurrently)
@@ -16,6 +16,14 @@ import           Salmon.Hls
 import           Salmon.Hub               as Hub
 import           Salmon.Server
 import           System.FSNotify
+
+data Config =
+  Config
+    { username :: String
+    , password :: String
+    , folder :: String
+    }
+  deriving (Show)
 
 
 synch_with_hub :: Credentials -> IO ()
@@ -93,11 +101,11 @@ watch_fs credentials =
     _ <- watchDir mgr library_path watch_predicate (process_update credentials)
     forever $ threadDelay 1000000
 
-run :: String -> String -> IO ()
-run username password = do
+run :: Config -> IO ()
+run (Config username password folder) = do
+  putStrLn $ "CONFIG :" ++ username ++ " " ++ password ++ " " ++ folder
   credentials <- Hub.login username password
-  putStr "CREDENTIALS :"
-  print credentials
+  putStrLn $ "CREDENTIALS :" ++ show credentials
   initialize_playlists
   synch_with_hub credentials
   putStrLn "settup complete"
