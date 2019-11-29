@@ -8,35 +8,50 @@ import           Path
 import           System.Directory
 
 
-library_path :: [Char]
-library_path = "/home/steams/Development/audigo/salmon-media-server/resources/"
+type Folder = Path Abs Dir
+type File_ = Path Abs File
 
-working_dir_path :: [Char]
-working_dir_path =
-  "/home/steams/Development/audigo/salmon-media-server/resources/.salmon/"
+working_dir_path folder = do
+  working_dir <- parseRelDir ".salmon"
+  return $ folder </> working_dir
 
-playlist_path :: [Char] -> [Char]
-playlist_path mp3 = working_dir_path ++ (take (length mp3 - 4) mp3) ++ ".m3u8"
+-- TODO this should probably return a Abs file path aswell, not a filepath string as it does now
+playlist_path :: File_ -> String
+playlist_path mp3 = take (length (toFilePath mp3) - 4) (toFilePath mp3) ++ ".m3u8"
 
-get_file_name :: Path b File -> FilePath
-get_file_name = (toFilePath . filename)
+get_file_name :: Path b File -> String
+get_file_name = toFilePath . filename
 
 to_hash :: Path b File -> IO String
 to_hash path = do
   file_data     <- ByteString.readFile $ toFilePath path
   return $ show $ md5 file_data
 
-get_files :: IO [Path Abs File]
-get_files = do
-  files           <- getDirectoryContents library_path
-  let full_paths  =  map ((++) library_path) files
+get_files :: Folder -> IO [File_]
+get_files folder = do
+  files           <- getDirectoryContents (toFilePath folder)
+  let full_paths  =  map (++ (toFilePath folder)) files
   let mp3s        =  filter (isSuffixOf ".mp3") full_paths
   parsed          <- mapM parseAbsFile mp3s
   return parsed
 
-create_working_dir :: IO ()
-create_working_dir = do
-  bool <- doesDirectoryExist working_dir_path
+create_working_dir :: Folder -> IO ()
+create_working_dir folder = do
+  working_dir <- working_dir_path folder
+  bool <- doesDirectoryExist $ toFilePath working_dir
   case bool of
     True  -> return ()
-    False -> createDirectory working_dir_path
+    False -> createDirectory $ toFilePath working_dir
+
+get_abs_path :: FilePath -> IO Folder
+get_abs_path path = do
+  abs <- makeAbsolute path
+  dir <- parseAbsDir abs
+  return dir
+
+
+get_abs_file :: FilePath -> IO File_
+get_abs_file path = do
+  abs <- makeAbsolute path
+  file <- parseAbsFile abs
+  return file

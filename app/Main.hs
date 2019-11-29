@@ -5,8 +5,8 @@ import           Data.Semigroup      ((<>))
 import           Options.Applicative
 import           Salmon (run,Config(..))
 
-args :: Parser Config
-args = Config
+args :: Parser Salmon.Config
+args = Salmon.Config
       <$> strOption
           ( long "username"
          <> short 'u'
