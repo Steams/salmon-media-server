@@ -17,7 +17,10 @@ working_dir_path folder = do
 
 -- TODO this should probably return a Abs file path aswell, not a filepath string as it does now
 playlist_path :: File_ -> String
-playlist_path mp3 = take (length (toFilePath mp3) - 4) (toFilePath mp3) ++ ".m3u8"
+playlist_path mp3 =
+  (toFilePath . parent $ mp3) ++ ".salmon/" ++  name ++ ".m3u8"
+  where
+    name = take (length (get_file_name mp3) - 4) (get_file_name mp3)
 
 get_file_name :: Path b File -> String
 get_file_name = toFilePath . filename
@@ -30,7 +33,7 @@ to_hash path = do
 get_files :: Folder -> IO [File_]
 get_files folder = do
   files           <- getDirectoryContents (toFilePath folder)
-  let full_paths  =  map (++ (toFilePath folder)) files
+  let full_paths  =  map (toFilePath folder ++) files
   let mp3s        =  filter (isSuffixOf ".mp3") full_paths
   parsed          <- mapM parseAbsFile mp3s
   return parsed
