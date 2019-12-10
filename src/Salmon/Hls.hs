@@ -13,9 +13,12 @@ import           Text.Printf
 ffmpeg_generate mp3 =
   printf "ffmpeg -i %s -c:a aac -b:a 64k -vn -hls_list_size 0 %s" (toFilePath mp3) (playlist_path mp3)
 
+generate_art mp3 =
+  printf "ffmpeg -i %s -an -vcodec copy %s" (toFilePath mp3) (art_path mp3)
+
 generate_playlist :: Path Abs File -> IO ()
 generate_playlist mp3 = do
   bool <- doesFileExist (playlist_path mp3)
   case bool of
     True  -> return ()
-    False -> callCommand $ ffmpeg_generate mp3
+    False -> mapM_ callCommand [ffmpeg_generate mp3, generate_art mp3]

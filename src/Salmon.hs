@@ -25,7 +25,14 @@ data Config =
     }
   deriving (Show)
 
+-- data Env =
+--   Env {credentials :: Credentions
+--       , get_local :: IO [ByteData]
+--       , get_remote :: IO [ByteData]
+--       , parse :: Bytedata -> Track (desnt work because parse track needs to take a fielpath,)
+--       }
 
+-- NOTE perhaps this should take some context type (Reader env) that encapsulates the file getting and response sending code, so that u can just test the synch functionality ?
 synch_with_hub :: Credentials -> Folder -> IO ()
 synch_with_hub credentials folder = do
   local_files            <- get_files folder
@@ -51,20 +58,6 @@ initialize_playlists folder = do
   create_working_dir folder
   mapM_ (forkIO . generate_playlist) files
 
-
-watch_predicate :: Event -> Bool
-watch_predicate =
-  \case
-    Added path _ _ ->
-      if isSuffixOf ".mp3" path
-        then True
-        else False
-    Removed path _ _ ->
-      if isSuffixOf ".mp3" path
-        then True
-        else False
-    Modified _ _ _ -> False
-    Unknown _ _ _ -> False
 
 
 process_update :: Credentials -> Folder -> Event -> IO ()
@@ -94,6 +87,20 @@ process_update credentials folder =
 
     Modified _ _ _ -> return ()
     Unknown _ _ _ -> return ()
+
+watch_predicate :: Event -> Bool
+watch_predicate =
+  \case
+    Added path _ _ ->
+      if isSuffixOf ".mp3" path
+        then True
+        else False
+    Removed path _ _ ->
+      if isSuffixOf ".mp3" path
+        then True
+        else False
+    Modified _ _ _ -> False
+    Unknown _ _ _ -> False
 
 watch_fs :: Credentials -> Folder -> IO a
 watch_fs credentials folder =

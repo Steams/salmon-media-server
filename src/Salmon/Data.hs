@@ -6,19 +6,20 @@ import           Data.Aeson
 import           Data.Digest.Pure.MD5
 import           Path
 import           Salmon.FileSystem
-import           Salmon.Server        (url_path)
+import           Salmon.Server        (url_path,art_url)
 import           Sound.HTagLib
 
-data Media = Media { title :: String , artist :: String, album :: String, duration :: Int, path :: String, hash :: String} deriving (Show)
+data Media = Media { title :: String , artist :: String, album :: String, duration :: Int, path :: String, art :: String, hash :: String} deriving (Show)
 
 instance ToJSON Media where
-  toJSON (Media title artist album duration playlist hash) =
+  toJSON (Media title artist album duration playlist art hash) =
     object
       [ "title" .= title
       , "artist" .= artist
       , "album" .= album
       , "duration" .= duration
       , "playlist" .= playlist
+      , "art" .= art
       , "hash" .= hash
       ]
 
@@ -43,6 +44,7 @@ track_to_media (file, file_hash) (AudioTrack title duration artist album) =
     (read . drop 6 . show $ album)
     (unDuration duration)
     (url_path $ get_file_name file)
+    (art_url $ get_file_name file)
     (file_hash)
 
 parse_track :: Path Abs File -> IO AudioTrack

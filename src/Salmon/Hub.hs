@@ -21,10 +21,10 @@ data Endpoint
 to_url :: Endpoint -> Request
 to_url =
   \case
-    MEDIA      -> parseRequest_ $ "POST " ++ base_url ++ "media"
-    GET_HASHES -> parseRequest_ $ "GET "  ++ base_url ++ "synch"
-    DELETE     -> parseRequest_ $ "POST " ++ base_url ++ "synch"
-    LOGIN      -> parseRequest_ $ "POST " ++ base_url ++ "api/login"
+    MEDIA      -> parseRequest_ $ "POST " ++ base_url ++ "api/media"
+    GET_HASHES -> parseRequest_ $ "GET "  ++ base_url ++ "api/synch"
+    DELETE     -> parseRequest_ $ "POST " ++ base_url ++ "api/synch"
+    LOGIN      -> parseRequest_ $ "POST " ++ base_url ++ "api/register"
 
 data LoginRequest = LoginRequest { username :: String , password :: String } deriving (Show)
 

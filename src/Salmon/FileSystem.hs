@@ -16,9 +16,16 @@ working_dir_path folder = do
   return $ folder </> working_dir
 
 -- TODO this should probably return a Abs file path aswell, not a filepath string as it does now
+-- TODO this should probably return a Abs file path aswell, not a filepath string as it does now
 playlist_path :: File_ -> String
 playlist_path mp3 =
   (toFilePath . parent $ mp3) ++ ".salmon/" ++  name ++ ".m3u8"
+  where
+    name = take (length (get_file_name mp3) - 4) (get_file_name mp3)
+
+art_path :: File_ -> String
+art_path mp3 =
+  (toFilePath . parent $ mp3) ++ ".salmon/" ++  name ++ ".jpg"
   where
     name = take (length (get_file_name mp3) - 4) (get_file_name mp3)
 
