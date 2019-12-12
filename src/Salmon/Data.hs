@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Salmon.Data(Media(..),track_to_media,parse_track)where
+module Salmon.Data(Media(..),track_to_media,parse_track, AudioTrack(..))where
 
 import           Data.Aeson
 import           Data.Digest.Pure.MD5
@@ -43,8 +43,10 @@ track_to_media (file, file_hash) (AudioTrack title duration artist album) =
     (read . drop 6 . show $ artist)
     (read . drop 6 . show $ album)
     (unDuration duration)
-    (url_path $ get_file_name file)
-    (art_url $ get_file_name file)
+    -- TODO path should be based on hash not name incase of name clash between albums
+    (url_path file_hash)
+    -- TODO This is silly fix later
+    (art_url  (read . drop 6 . show $ album))
     (file_hash)
 
 parse_track :: Path Abs File -> IO AudioTrack

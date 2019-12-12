@@ -54,9 +54,12 @@ synch_with_hub credentials folder = do
 
 initialize_playlists :: Folder -> IO ()
 initialize_playlists folder = do
-  files <- get_files folder
+  files  <- get_files folder
+  tracks <- mapM (parse_track) files
+  let albums = map (read . Data.List.drop 6 . show . atAlbum) tracks
+  hashes <- mapM to_hash files
   create_working_dir folder
-  mapM_ (forkIO . generate_playlist) files
+  mapM_ (forkIO . generate_playlist) (zip3 files hashes albums)
 
 
 
@@ -71,7 +74,8 @@ process_update credentials folder =
       putStr "Printing prased track :: "
       print track
       let media     = track_to_media (file_path, hash) track
-      generate_playlist file_path
+      -- TODO for the love of god write a function for extracting track properties and stop doing this
+      generate_playlist (file_path,hash,(read . Data.List.drop 6 . show . atAlbum) track)
       response     <- Hub.post_songs credentials [media]
       print . getResponseStatus $ response
 

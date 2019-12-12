@@ -27,4 +27,4 @@ cabal.project.local~
 *.org
 TAGS
 .hlint.yaml
-resources
+resources*
