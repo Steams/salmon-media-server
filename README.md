@@ -1,5 +1,5 @@
 # Salmon - Media Server
-Local media server utilizing ffmpeg to produce and serve HLS streams for music files (mpeg-dash and webrtc to come). Part of the [Salmon](https://github.com/steams/salmon) streaming platform.
+Local media server utilizing ffmpeg to produce and serve HLS streams for music files (mpeg-dash and webrtc to come). Part of the [Salmon](https://github.com/steams/salmon) streaming platform. See also : [github.com/Steams/salmon-hub](https://github.com/Steams/salmon-hub), [github.com/Steams/salmon-web-client](https://github.com/Steams/salmon-web-client)
 
 This program is intended to be installed on the machine where your media is stored and will watch a given folder for current media, updates and deletions, and synchronize the media listed in Salmon Hub and displayed in Salmon Clients with the state of your filesystem. This program generates HLS playlists and segments for each piece of media within the watched folder and makes them available for streaming over http.
 
